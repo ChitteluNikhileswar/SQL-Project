@@ -1,0 +1,66 @@
+-- Create a table for Customers
+CREATE TABLE Customers (
+    CustomerID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    Email VARCHAR(100),
+    Phone VARCHAR(15)
+);
+
+-- Create a table for Menu Items
+CREATE TABLE MenuItems (
+    MenuItemID INT PRIMARY KEY AUTO_INCREMENT,
+    ItemName VARCHAR(100),
+    Description TEXT,
+    Price DECIMAL(10, 2)
+);
+
+-- Create a table for Orders
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerID INT,
+    OrderDate DATE,
+    TotalAmount DECIMAL(10, 2),
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+
+-- Create a table for Order Details
+CREATE TABLE OrderDetails (
+    OrderDetailID INT PRIMARY KEY AUTO_INCREMENT,
+    OrderID INT,
+    MenuItemID INT,
+    Quantity INT,
+    Price DECIMAL(10, 2),
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+    FOREIGN KEY (MenuItemID) REFERENCES MenuItems(MenuItemID)
+);
+
+-- Insert sample customers
+INSERT INTO Customers (FirstName, LastName, Email, Phone) VALUES
+('John', 'Doe', 'john.doe@example.com', '555-1234'),
+('Jane', 'Smith', 'jane.smith@example.com', '555-5678');
+
+-- Insert sample menu items
+INSERT INTO MenuItems (ItemName, Description, Price) VALUES
+('Cheeseburger', 'A delicious cheeseburger with all the fixings', 8.99),
+('Caesar Salad', 'Crispy romaine lettuce with Caesar dressing', 7.49);
+
+-- Insert a sample order
+INSERT INTO Orders (CustomerID, OrderDate, TotalAmount) VALUES
+(1, '2024-09-01', 16.48);
+
+-- Insert details for the sample order
+INSERT INTO OrderDetails (OrderID, MenuItemID, Quantity, Price) VALUES
+(1, 1, 1, 8.99),  -- 1 Cheeseburger
+(1, 2, 1, 7.49);  -- 1 Caesar Salad
+
+-- Retrieve all orders with customer details
+SELECT Orders.OrderID, Customers.FirstName, Customers.LastName, Orders.OrderDate, Orders.TotalAmount
+FROM Orders
+JOIN Customers ON Orders.CustomerID = Customers.CustomerID;
+
+-- Retrieve details of a specific order (e.g., OrderID = 1)
+SELECT OrderDetails.OrderID, MenuItems.ItemName, OrderDetails.Quantity, OrderDetails.Price
+FROM OrderDetails
+JOIN MenuItems ON OrderDetails.MenuItemID = MenuItems.MenuItemID
+WHERE OrderDetails.OrderID = 1;
